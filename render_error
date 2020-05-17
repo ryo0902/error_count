@@ -1,0 +1,85 @@
+import os
+import glob
+import re
+from pathlib import Path
+from datetime import datetime as dt
+YMD ='2020/05/16'
+filename='20200516.log'
+out_file='ファイルを作りたいルートディレクトリ'+filename
+
+#書き込み用のファイルを作る
+f = open(out_file, mode="w")
+f.write(YMD+'分のエラーまとめ\n')
+f.write('==============================\n')
+f.close()
+
+#エラーをチェックしたいファイルパスを指定
+log_path_list=glob.glob("エラーをチェックしたいファイルのあるディレクトリを指定/r*")
+
+for log_path in log_path_list:
+    #ログと読み込む
+    with open(log_path) as f:
+        lines = f.readlines()
+    #ログを読み込んで1行ずつリストに加える
+    lines_strip = [line.strip() for line in lines]
+
+    for line in lines_strip:
+        if re.search(YMD+' [0-9][0-9]:[0-9][0-9]:[0-9][0-9] 素材更新終了 [A-Z][0-9][0-9][0-9] \(PYエラー\)' ,line):
+            f = open(out_file, mode="a")
+            f.write(line+'\n') 
+            f.close()
+
+for log_path in log_path_list:
+    #ログと読み込む
+    with open(log_path) as f:
+        lines = f.readlines()
+    #ログを読み込んで1行ずつリストに加える
+    lines_strip = [line.strip() for line in lines]
+    
+    for line in lines_strip:
+        if re.search(YMD+' [0-9][0-9]:[0-9][0-9]:[0-9][0-9] 素材更新終了 [A-Z][0-9][0-9][0-9] \(TLPエラー\)' ,line):
+            f = open(out_file, mode="a")
+            f.write(line+'\n') 
+            f.close()
+
+for log_path in log_path_list:
+    #ログと読み込む
+    with open(log_path) as f:
+        lines = f.readlines()
+    #ログを読み込んで1行ずつリストに加える
+    lines_strip = [line.strip() for line in lines]
+    
+    for line in lines_strip:
+        if re.search(YMD+' [0-9][0-9]:[0-9][0-9]:[0-9][0-9] 素材更新終了 [A-Z][0-9][0-9][0-9] \(DATエラー\)' ,line):
+            f = open(out_file, mode="a")
+            f.write(line+'\n') 
+            f.close()
+
+
+with open(out_file) as f:
+    out_file_lines = f.readlines()
+#ログを読み込んで1行ずつリストに加える
+    out_file_lines_strip = [out_file_line.strip() for out_file_line in out_file_lines]
+
+    out_file_lines_strip_py=[py for py in out_file_lines_strip if 'PYエラー' in py]
+    py_count=len(out_file_lines_strip_py)
+    f = open(out_file, mode="a")
+    f.write('【PYエラー】'+str(py_count)+'件\n') 
+    f.write('==============================\n')
+    f.close()
+
+    out_file_lines_strip_tlp=[tlp for tlp in out_file_lines_strip if 'TLPエラー' in tlp]
+    tlp_count=len(out_file_lines_strip_tlp)
+    f = open(out_file, mode="a")
+    f.write('【TLPエラー】'+str(tlp_count)+'件\n') 
+    f.write('==============================\n')
+    f.close()
+
+    out_file_lines_strip_dat=[dat for dat in out_file_lines_strip if 'DATエラー' in dat]
+    dat_count=len(out_file_lines_strip_dat)
+    f = open(out_file, mode="a")
+    f.write('【PYエラー】'+str(dat_count)+'件\n') 
+    f.write('==============================\n')
+    f.close()
+
+    
